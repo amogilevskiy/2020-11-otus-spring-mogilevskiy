@@ -3,4 +3,23 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <bean id="questionDao" class="otus.amogilevskiy.spring.dao.CsvQuestionDao">
+        <constructor-arg name="parser" ref="questionParser"/>
+        <constructor-arg name="filePath" value="/questions.csv"/>
+    </bean>
+
+    <bean id="questionParser" class="otus.amogilevskiy.spring.service.CsvQuestionParser"/>
+
+    <bean id="questionStringFormatter" class="otus.amogilevskiy.spring.service.QuestionStringFormatterImpl"></bean>
+
+    <bean id="quizService" class="otus.amogilevskiy.spring.service.QuizServiceImpl">
+        <constructor-arg name="questionDao" ref="questionDao"/>
+        <constructor-arg name="questionStringFormatter" ref="questionStringFormatter"/>
+        <constructor-arg name="ioService" ref="ioService"/>
+    </bean>
+
+    <bean name="ioService" class="otus.amogilevskiy.spring.service.ConsoleIOService">
+        <constructor-arg name="out" value="#{T(java.lang.System).out}"/>
+    </bean>
+
 </beans>
