@@ -1,4 +1,4 @@
-package otus.amogilevskiy.spring.service;
+package otus.amogilevskiy.spring.service.quiz;
 
 public interface QuizService {
 

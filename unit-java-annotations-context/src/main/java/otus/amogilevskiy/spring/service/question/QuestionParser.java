@@ -1,4 +1,4 @@
-package otus.amogilevskiy.spring.service;
+package otus.amogilevskiy.spring.service.question;
 
 import otus.amogilevskiy.spring.domain.Question;
 
