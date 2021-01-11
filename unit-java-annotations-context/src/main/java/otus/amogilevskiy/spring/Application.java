@@ -4,7 +4,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import otus.amogilevskiy.spring.service.QuizService;
+import otus.amogilevskiy.spring.service.quiz.QuizService;
 
 
 @PropertySource("classpath:application.properties")

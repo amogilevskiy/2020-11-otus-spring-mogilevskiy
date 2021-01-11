@@ -3,7 +3,7 @@ package otus.amogilevskiy.spring.dao;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import otus.amogilevskiy.spring.domain.Question;
-import otus.amogilevskiy.spring.service.QuestionParser;
+import otus.amogilevskiy.spring.service.question.QuestionParser;
 
 import java.util.ArrayList;
 import java.util.Optional;

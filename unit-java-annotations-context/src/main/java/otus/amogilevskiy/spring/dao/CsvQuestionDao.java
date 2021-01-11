@@ -5,7 +5,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import otus.amogilevskiy.spring.domain.Question;
-import otus.amogilevskiy.spring.service.QuestionParser;
+import otus.amogilevskiy.spring.service.question.QuestionParser;
 
 import java.io.IOException;
 import java.util.ArrayList;

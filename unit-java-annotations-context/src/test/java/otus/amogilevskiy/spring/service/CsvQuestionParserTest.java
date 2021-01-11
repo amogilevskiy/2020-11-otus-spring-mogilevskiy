@@ -3,6 +3,8 @@ package otus.amogilevskiy.spring.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import otus.amogilevskiy.spring.domain.Answer;
+import otus.amogilevskiy.spring.service.question.CsvQuestionParser;
+import otus.amogilevskiy.spring.service.question.QuestionParser;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;

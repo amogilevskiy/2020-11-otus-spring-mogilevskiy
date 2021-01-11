@@ -57,7 +57,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>otus.amogilevskiy.spring.Main</mainClass>
+                            <mainClass>otus.amogilevskiy.spring.Application</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
