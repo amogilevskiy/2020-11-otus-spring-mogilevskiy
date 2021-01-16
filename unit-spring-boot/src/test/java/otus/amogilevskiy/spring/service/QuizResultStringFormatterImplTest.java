@@ -3,6 +3,8 @@ package otus.amogilevskiy.spring.service;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import otus.amogilevskiy.spring.domain.QuizGrade;
 import otus.amogilevskiy.spring.domain.User;
 import otus.amogilevskiy.spring.service.quiz.QuizResultStringFormatterImpl;
@@ -11,7 +13,11 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SpringBootTest
 public class QuizResultStringFormatterImplTest {
+
+    @Autowired
+    QuizResultStringFormatterImpl formatter;
 
     private static Stream<Arguments> params() {
         return Stream.of(
@@ -35,8 +41,6 @@ public class QuizResultStringFormatterImplTest {
     @ParameterizedTest
     @MethodSource("params")
     void shouldReturnCorrectString(User user, QuizGrade grade, String expectedString) {
-        var formatter = new QuizResultStringFormatterImpl();
-
         assertEquals(expectedString, formatter.format(user, grade));
     }
 }

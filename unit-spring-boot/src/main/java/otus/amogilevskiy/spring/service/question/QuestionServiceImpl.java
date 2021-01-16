@@ -5,6 +5,7 @@ import otus.amogilevskiy.spring.dao.QuestionDao;
 import otus.amogilevskiy.spring.domain.Question;
 import otus.amogilevskiy.spring.domain.QuestionResult;
 import otus.amogilevskiy.spring.service.io.IOService;
+import otus.amogilevskiy.spring.service.localization.LocalizationService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,19 +19,23 @@ public class QuestionServiceImpl implements QuestionService {
 
     private final IOService ioService;
 
+    private final LocalizationService localizationService;
+
     public QuestionServiceImpl(QuestionDao questionDao,
                                QuestionStringFormatter questionStringFormatter,
-                               IOService ioService) {
+                               IOService ioService,
+                               LocalizationService localizationService) {
         this.questionDao = questionDao;
         this.questionStringFormatter = questionStringFormatter;
         this.ioService = ioService;
+        this.localizationService = localizationService;
     }
 
     @Override
     public List<QuestionResult> showQuestionsForm() {
         var questions = questionDao.findAll();
         if (questions.size() == 0) {
-            showError("Questions not found.");
+            showError(localizationService.localize("error.questionsNotFound"));
             return new ArrayList<>();
         } else {
             return showQuestions(questions);

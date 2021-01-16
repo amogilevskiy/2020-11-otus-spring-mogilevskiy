@@ -11,4 +11,4 @@ spring:
     basename: i18n/common
 
 application:
-  locale: ru_RU
+  locale: en

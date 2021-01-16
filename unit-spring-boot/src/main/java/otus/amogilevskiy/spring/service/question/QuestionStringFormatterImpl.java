@@ -3,19 +3,28 @@ package otus.amogilevskiy.spring.service.question;
 import org.springframework.stereotype.Service;
 import otus.amogilevskiy.spring.domain.Answer;
 import otus.amogilevskiy.spring.domain.Question;
+import otus.amogilevskiy.spring.service.localization.LocalizationService;
 
 import java.util.List;
 
 @Service
 public class QuestionStringFormatterImpl implements QuestionStringFormatter {
 
+    private final LocalizationService localizationService;
+
+    public QuestionStringFormatterImpl(LocalizationService localizationService) {
+        this.localizationService = localizationService;
+    }
+
     @Override
     public String format(Question question, int index) {
-        return String.format("%d. %s \n%s\n", index, question.getText(), formatAnswers(question.getAnswers()));
+        var questionTranslation = localizationService.localize(question.getText());
+        return localizationService.localize("quiz.form.question.format",
+                new Object[]{index, questionTranslation, formatAnswers(question.getAnswers())});
     }
 
     private String formatAnswers(List<Answer> answers) {
-        var builder = new StringBuilder("\n\tAnswers:\n");
+        var builder = new StringBuilder(localizationService.localize("quiz.form.answers"));
         var index = 0;
         for (var answer : answers) {
             builder.append(formatAnswer(answer, index++));
@@ -24,7 +33,8 @@ public class QuestionStringFormatterImpl implements QuestionStringFormatter {
     }
 
     private String formatAnswer(Answer answer, int index) {
-        return String.format("\n\t%d. %s", index, answer.getText());
+        var answerTranslation = localizationService.localize(answer.getText());
+        return localizationService.localize("quiz.form.answer.format", new Object[]{index, answerTranslation});
     }
 
 }
