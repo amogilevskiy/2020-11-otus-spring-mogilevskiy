@@ -1,0 +1,7 @@
+questions:
+  source:
+    path: questions.csv
+
+grade:
+  passed:
+    ratio: 0.6
