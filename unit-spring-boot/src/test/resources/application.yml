@@ -1,0 +1,14 @@
+questions:
+  source:
+    path: questions.csv
+
+grade:
+  passed:
+    ratio: 0.6
+
+spring:
+  messages:
+    basename: i18n/common
+
+application:
+  locale: en

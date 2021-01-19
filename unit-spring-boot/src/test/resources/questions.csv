@@ -1,0 +1,5 @@
+question.inheritance,answer.no,answer.yes
+question.platform,answer.no,answer.yes
+question.jvm,answer.javaVirtualMachine,answer.javaVirtualMailer,answer.javaVirtualMessenger
+question.jdk,answer.javaDevelopmentKit,answer.javaDevelopmentKey,answer.javaDevelopmentKing
+question.jre,answer.javaRuntimeEnvironment,answer.javaRuntimeEdition,answer.javaRuntimeEnterprise
