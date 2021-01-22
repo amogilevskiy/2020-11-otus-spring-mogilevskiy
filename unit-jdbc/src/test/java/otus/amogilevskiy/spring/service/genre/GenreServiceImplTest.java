@@ -27,24 +27,5 @@ public class GenreServiceImplTest {
     @Autowired
     GenreService genreService;
 
-    @Test
-    void shouldReturnNewGenre() {
-        var expectedIntValue = 1L;
-        var expectedStringValue = "Genre";
-        var expectedGenre = new Genre(
-                expectedIntValue,
-                expectedStringValue
-        );
-
-        when(formService.showIntegerFormField(anyString())).thenReturn(expectedIntValue);
-        when(formService.showStringFormField(anyString())).thenReturn(expectedStringValue);
-
-        when(genreDao.findById(expectedIntValue)).thenReturn(Optional.empty());
-        when(genreDao.create(any())).thenReturn(true);
-
-        var actualGenre = genreService.addGenreUsingForm();
-
-        assertThat(actualGenre).contains(expectedGenre);
-    }
 
 }

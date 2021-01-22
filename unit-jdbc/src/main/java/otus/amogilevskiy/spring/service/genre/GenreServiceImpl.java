@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import otus.amogilevskiy.spring.dao.genre.GenreDao;
 import otus.amogilevskiy.spring.domain.Genre;
+import otus.amogilevskiy.spring.dto.genre.CreateGenreDto;
 import otus.amogilevskiy.spring.service.form.FormService;
 import otus.amogilevskiy.spring.service.localization.LocalizationService;
 
@@ -21,19 +22,18 @@ public class GenreServiceImpl implements GenreService {
     public Optional<Genre> addGenreUsingForm() {
         formService.showLabelField(localizationService.localize("question.genre.form"));
 
-        var genre = createGenreUsingForm();
-        if (genreDao.findById(genre.getId()).isPresent()) {
+        var dto = createGenreUsingForm();
+        if (genreDao.findByTitle(dto.getTitle()).isPresent()) {
             formService.showLabelField(localizationService.localize("error.genreAlreadyExists"));
-        } else if (genreDao.create(genre)) {
-            return Optional.of(genre);
+        } else if (genreDao.create(dto)) {
+            return genreDao.findByTitle(dto.getTitle());
         }
         return Optional.empty();
     }
 
-    private Genre createGenreUsingForm() {
-        var id = formService.showIntegerFormField(localizationService.localize("question.genre.id"));
+    private CreateGenreDto createGenreUsingForm() {
         var title = formService.showStringFormField(localizationService.localize("question.genre.title"));
-        return new Genre(id, title);
+        return new CreateGenreDto(title);
     }
 
 }

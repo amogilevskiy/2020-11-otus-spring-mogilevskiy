@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 import otus.amogilevskiy.spring.domain.Author;
+import otus.amogilevskiy.spring.dto.author.CreateAuthorDto;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,7 +26,25 @@ public class JdbcAuthorDao implements AuthorDao {
         var params = Map.of("id", id);
         try {
             return Optional.ofNullable(
-                    jdbc.queryForObject("SELECT * FROM authors WHERE `id` = :id", params, new AuthorMapper())
+                    jdbc.queryForObject("SELECT id, first_name, last_name, middle_name FROM authors WHERE id = :id", params, new AuthorMapper())
+            );
+        } catch (DataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Author> findByFirstNameAndLastName(String firstName, String lastName) {
+        var params = Map.of(
+                "first_name", firstName,
+                "last_name", lastName
+        );
+        try {
+            return Optional.ofNullable(
+                    jdbc.queryForObject("SELECT id, first_name, last_name, middle_name FROM authors " +
+                                    "WHERE first_name = :first_name " +
+                                    "AND last_name = :last_name",
+                            params, new AuthorMapper())
             );
         } catch (DataAccessException e) {
             return Optional.empty();
@@ -35,24 +54,22 @@ public class JdbcAuthorDao implements AuthorDao {
     @Override
     public List<Author> findAll() {
         try {
-            return jdbc.query("SELECT * FROM authors", new AuthorMapper());
+            return jdbc.query("SELECT id, first_name, last_name, middle_name FROM authors", new AuthorMapper());
         } catch (DataAccessException e) {
             return List.of();
         }
     }
 
     @Override
-    public boolean create(Author author) {
+    public boolean create(CreateAuthorDto dto) {
         var params = new HashMap<>(Map.of(
-                "id", author.getId(),
-                "first_name", author.getFirstName(),
-                "last_name", author.getLastName()
+                "first_name", dto.getFirstName(),
+                "last_name", dto.getLastName()
         ));
-
-        params.put("middle_name", author.getMiddleName());
+        params.put("middle_name", dto.getMiddleName());
 
         try {
-            return jdbc.update("INSERT INTO authors (`id`, `first_name`, `last_name`, `middle_name`) values (:id, :first_name, :last_name, :middle_name)", params) > 0;
+            return jdbc.update("INSERT INTO authors (first_name, last_name, middle_name) values (:first_name, :last_name, :middle_name)", params) > 0;
         } catch (DataAccessException e) {
             return false;
         }
@@ -64,7 +81,7 @@ public class JdbcAuthorDao implements AuthorDao {
                 "id", id
         );
         try {
-            return jdbc.update("DELETE FROM authors WHERE `id` = :id", params) > 0;
+            return jdbc.update("DELETE FROM authors WHERE id = :id", params) > 0;
         } catch (DataAccessException e) {
             return false;
         }

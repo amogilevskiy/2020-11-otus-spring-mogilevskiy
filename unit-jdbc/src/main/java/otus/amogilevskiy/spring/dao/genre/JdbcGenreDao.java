@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 import otus.amogilevskiy.spring.domain.Genre;
+import otus.amogilevskiy.spring.dto.genre.CreateGenreDto;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,7 +24,7 @@ public class JdbcGenreDao implements GenreDao {
         var params = Map.of("id", id);
         try {
             return Optional.ofNullable(
-                    jdbc.queryForObject("SELECT * FROM genres WHERE `id` = :id", params, new GenreMapper())
+                    jdbc.queryForObject("SELECT id, title FROM genres WHERE id = :id", params, new GenreMapper())
             );
         } catch (DataAccessException e) {
             return Optional.empty();
@@ -31,13 +32,24 @@ public class JdbcGenreDao implements GenreDao {
     }
 
     @Override
-    public boolean create(Genre genre) {
+    public Optional<Genre> findByTitle(String title) {
+        var params = Map.of("title", title);
+        try {
+            return Optional.ofNullable(
+                    jdbc.queryForObject("SELECT id, title FROM genres WHERE UPPER(title) = UPPER(:title)", params, new GenreMapper())
+            );
+        } catch (DataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public boolean create(CreateGenreDto dto) {
         var params = Map.of(
-                "id", genre.getId(),
-                "title", genre.getTitle()
+                "title", dto.getTitle()
         );
         try {
-            return jdbc.update("INSERT INTO genres (`id`, `title`) values (:id, :title)", params) > 0;
+            return jdbc.update("INSERT INTO genres (title) values (:title)", params) > 0;
         } catch (DataAccessException e) {
             return false;
         }

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 import otus.amogilevskiy.spring.domain.Genre;
+import otus.amogilevskiy.spring.dto.genre.CreateGenreDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,13 +18,12 @@ public class JdbcGenreDaoTest {
 
     @Test
     void shouldCreateGenre() {
-        var id = 2;
-        var expectedGenre = new Genre(id, "New genre");
+        var expectedGenre = new CreateGenreDto("New genre");
 
         genreDao.create(expectedGenre);
-        var actualGenre = genreDao.findById(id);
+        var actualGenre = genreDao.findByTitle(expectedGenre.getTitle());
 
-        assertThat(actualGenre).contains(expectedGenre);
+        assertThat(actualGenre.get()).usingRecursiveComparison().ignoringFields("id").isEqualTo(expectedGenre);
     }
 
     @Test

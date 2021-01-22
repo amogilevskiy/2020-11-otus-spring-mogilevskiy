@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS genres;
 
 CREATE TABLE authors
 (
-    id          BIGINT PRIMARY KEY,
+    id          BIGINT PRIMARY KEY AUTO_INCREMENT,
     first_name  VARCHAR(255),
     last_name   VARCHAR(255),
     middle_name VARCHAR(255)
@@ -12,13 +12,13 @@ CREATE TABLE authors
 
 CREATE TABLE genres
 (
-    id    BIGINT PRIMARY KEY,
+    id    BIGINT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(255)
 );
 
 CREATE TABLE books
 (
-    id        BIGINT PRIMARY KEY,
+    id        BIGINT PRIMARY KEY AUTO_INCREMENT,
     title     VARCHAR(255),
     author_id BIGINT NOT NULL,
     genre_id  BIGINT NOT NULL,

@@ -9,11 +9,8 @@ import otus.amogilevskiy.spring.domain.Author;
 import otus.amogilevskiy.spring.service.form.FormService;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -27,28 +24,6 @@ public class AuthorServiceImplTest {
 
     @Autowired
     AuthorService authorService;
-
-    @Test
-    void shouldReturnNewAuthor() {
-        var expectedIntValue = 1L;
-        var expectedStringValue = "Name";
-        var expectedAuthor = new Author(
-                expectedIntValue,
-                expectedStringValue,
-                expectedStringValue,
-                expectedStringValue
-        );
-
-        when(formService.showIntegerFormField(anyString())).thenReturn(expectedIntValue);
-        when(formService.showStringFormField(anyString())).thenReturn(expectedStringValue);
-
-        when(authorDao.findById(expectedIntValue)).thenReturn(Optional.empty());
-        when(authorDao.create(any())).thenReturn(true);
-
-        var actualAuthor = authorService.addAuthorUsingForm();
-
-        assertThat(actualAuthor).contains(expectedAuthor);
-    }
 
     @Test
     void shouldReturnAllAuthors() {

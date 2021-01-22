@@ -4,7 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
+import otus.amogilevskiy.spring.domain.Author;
 import otus.amogilevskiy.spring.domain.Book;
+import otus.amogilevskiy.spring.domain.Genre;
+import otus.amogilevskiy.spring.service.book.BookDetail;
 
 import java.util.List;
 
@@ -52,6 +55,19 @@ public class JdbcBookDaoTest {
         var expectedBook = new Book(1, "Java 11", 1L, 1L);
 
         var actualBook = bookDao.findById(1);
+
+        assertThat(actualBook).contains(expectedBook);
+    }
+
+    @Test
+    void shouldReturnBookDetailById() {
+        var expectedBook = new BookDetail(1,
+                "Java 11",
+                new Author(1, "Test 1", "with", "middle name"),
+                new Genre(1, "IT")
+        );
+
+        var actualBook = bookDao.findDetailById(1);
 
         assertThat(actualBook).contains(expectedBook);
     }

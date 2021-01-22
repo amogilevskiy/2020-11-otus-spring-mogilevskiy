@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 import otus.amogilevskiy.spring.domain.Author;
+import otus.amogilevskiy.spring.dto.author.CreateAuthorDto;
 
 import java.util.List;
 
@@ -41,6 +42,15 @@ public class JdbcAuthorDaoTest {
     }
 
     @Test
+    void shouldReturnAuthorByFirstNameAndLastName() {
+        var expectedAuthor = new Author(1, "Test 1", "with", "middle name");
+
+        var actualAuthor = authorDao.findByFirstNameAndLastName(expectedAuthor.getFirstName(), expectedAuthor.getLastName());
+
+        assertThat(actualAuthor).contains(expectedAuthor);
+    }
+
+    @Test
     void shouldReturnEmptyIfAuthorNotFoundById() {
         var actualAuthor = authorDao.findById(NON_EXISTING_AUTHOR_ID);
 
@@ -49,12 +59,12 @@ public class JdbcAuthorDaoTest {
 
     @Test
     void shouldCreateAuthor() {
-        var expectedAuthor = new Author(5, "New author", "New last name", null);
+        var expectedAuthor = new CreateAuthorDto("New author", "New last name", null);
 
         authorDao.create(expectedAuthor);
-        var actualAuthor = authorDao.findById(expectedAuthor.getId());
+        var actualAuthor = authorDao.findByFirstNameAndLastName(expectedAuthor.getFirstName(), expectedAuthor.getLastName());
 
-        assertThat(actualAuthor).contains(expectedAuthor);
+        assertThat(actualAuthor.get()).usingRecursiveComparison().ignoringFields("id").isEqualTo(expectedAuthor);
     }
 
 }
