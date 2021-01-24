@@ -1,16 +1,20 @@
 package otus.amogilevskiy.spring.domain;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
+@Builder
+@RequiredArgsConstructor
 public class Book {
 
-    private final long id;
+    private final Long id;
 
     private final String title;
 
-    private final Long authorId;
+    private final Author author;
 
-    private final Long genreId;
+    private final Genre genre;
 
 }

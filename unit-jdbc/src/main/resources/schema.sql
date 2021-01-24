@@ -13,7 +13,7 @@ CREATE TABLE authors
 CREATE TABLE genres
 (
     id    BIGINT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(255)
+    title VARCHAR(255) UNIQUE
 );
 
 CREATE TABLE books

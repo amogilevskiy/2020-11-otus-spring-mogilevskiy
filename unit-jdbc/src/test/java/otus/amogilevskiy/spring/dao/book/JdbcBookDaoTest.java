@@ -4,10 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import otus.amogilevskiy.spring.domain.Author;
+import otus.amogilevskiy.spring.dao.TestData;
 import otus.amogilevskiy.spring.domain.Book;
-import otus.amogilevskiy.spring.domain.Genre;
-import otus.amogilevskiy.spring.service.book.BookDetail;
 
 import java.util.List;
 
@@ -25,11 +23,7 @@ public class JdbcBookDaoTest {
 
     @Test
     void shouldReturnAllBooks() {
-        var expectedBooks = List.of(
-                new Book(1, "Java 11", 1L, 1L),
-                new Book(2, "Swift", 1L, 1L),
-                new Book(3, "Kotlin", 2L, 1L)
-        );
+        var expectedBooks = TestData.allBooks();
 
         var actualBooks = bookDao.findAll();
 
@@ -38,36 +32,24 @@ public class JdbcBookDaoTest {
 
     @Test
     void shouldReturnAllBooksByAuthorId() {
-        var authorId = 1L;
+        var author = TestData.firstAuthor();
+        var genre = TestData.firstGenre();
 
         var expectedBooks = List.of(
-                new Book(1, "Java 11", authorId, 1L),
-                new Book(2, "Swift", authorId, 1L)
+                new Book(1L, "Java 11", author, genre),
+                new Book(2L, "Swift", author, genre)
         );
 
-        var actualBooks = bookDao.findAllByAuthorId(authorId);
+        var actualBooks = bookDao.findAllByAuthorId(author.getId());
 
         assertThat(actualBooks).containsExactlyInAnyOrderElementsOf(expectedBooks);
     }
 
     @Test
     void shouldReturnBookById() {
-        var expectedBook = new Book(1, "Java 11", 1L, 1L);
+        var expectedBook = TestData.firstBook();
 
         var actualBook = bookDao.findById(1);
-
-        assertThat(actualBook).contains(expectedBook);
-    }
-
-    @Test
-    void shouldReturnBookDetailById() {
-        var expectedBook = new BookDetail(1,
-                "Java 11",
-                new Author(1, "Test 1", "with", "middle name"),
-                new Genre(1, "IT")
-        );
-
-        var actualBook = bookDao.findDetailById(1);
 
         assertThat(actualBook).contains(expectedBook);
     }
@@ -81,23 +63,23 @@ public class JdbcBookDaoTest {
 
     @Test
     void shouldCreateBook() {
-        var expectedBook = new Book(5, "Java 11", 1L, 1L);
+        var expectedBook = new Book(null, "New Java 11", TestData.firstAuthor(), TestData.firstGenre());
 
         bookDao.create(expectedBook);
-        var actualBook = bookDao.findById(expectedBook.getId());
+        var actualBooks = bookDao.findAllByTitle(expectedBook.getTitle());
 
-        assertThat(actualBook).contains(expectedBook);
+        assertThat(actualBooks).usingElementComparatorIgnoringFields("id").contains(expectedBook);
     }
 
     @Test
     void shouldUpdateBook() {
-        var id = 1L;
-        var expectedBook = new Book(id, "new title", 1L, 1L);
+        var expectedBook = new Book(1L, "Updated Java 11",
+                TestData.firstAuthor(), TestData.firstGenre());
 
         bookDao.update(expectedBook);
-        var actualBook = bookDao.findById(id);
+        var actualBook = bookDao.findById(expectedBook.getId());
 
-        assertThat(actualBook).contains(expectedBook);
+        assertThat(actualBook).get().usingRecursiveComparison().ignoringFields("authorId", "genreId").isEqualTo(expectedBook);
     }
 
     @Test

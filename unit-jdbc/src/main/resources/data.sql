@@ -1,8 +1,8 @@
-INSERT INTO authors (id, `first_name`, `last_name`, `middle_name`)
-values (1, 'Test 1', 'with', 'middle name');
-
 INSERT INTO authors (id, `first_name`, `last_name`)
-values (2, 'Test 2', 'Only last name');
+values (1, 'William', 'Shakespeare');
+
+INSERT INTO authors (id, `first_name`, `last_name`, `middle_name`)
+values (2, 'Lev', 'Tolstoy', 'Nikolayevich');
 
 
 INSERT INTO genres (id, `title`)

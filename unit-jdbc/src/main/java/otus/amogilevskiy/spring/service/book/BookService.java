@@ -1,20 +1,21 @@
 package otus.amogilevskiy.spring.service.book;
 
 import otus.amogilevskiy.spring.domain.Book;
+import otus.amogilevskiy.spring.dto.book.UpdateBookDto;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface BookService {
 
-    Optional<Book> findBookById(long id);
+    Optional<Book> findById(long id);
 
-    List<Book> findAllBooks();
+    boolean create(Book book);
 
-    Optional<Book> addBookUsingForm(long authorId, long genreId);
+    boolean update(UpdateBookDto dto);
 
-    boolean updateBookUsingForm(long id);
+    List<Book> findAll();
 
-    boolean deleteBookById(long id);
+    boolean deleteById(long id);
 
 }

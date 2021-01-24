@@ -2,75 +2,54 @@ package otus.amogilevskiy.spring.service.book;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import otus.amogilevskiy.spring.dao.TestData;
 import otus.amogilevskiy.spring.dao.book.BookDao;
 import otus.amogilevskiy.spring.domain.Book;
-import otus.amogilevskiy.spring.service.form.FormService;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@JdbcTest
+@Import(BookServiceImpl.class)
 public class BookServiceImplTest {
 
     @MockBean
-    BookDao bookDao;
-
-    @MockBean
-    FormService formService;
+    private BookDao bookDao;
 
     @Autowired
-    BookService bookService;
+    private BookService bookService;
 
     @Test
-    void shouldReturnNewBook() {
-        var expectedIntValue = 1L;
-        var expectedStringValue = "Name";
+    void shouldReturnTrueWhenBookCreated() {
+        var book = new Book(null, "New book", TestData.firstAuthor(), TestData.firstGenre());
+        when(bookDao.create(book)).thenReturn(true);
 
-        var authorId = 1L;
-        var genreId = 1L;
+        var actualResult = bookService.create(book);
 
-        var expectedBook = new Book(
-                expectedIntValue,
-                expectedStringValue,
-                1L,
-                1L
-        );
-
-        when(formService.showIntegerFormField(anyString())).thenReturn(expectedIntValue);
-        when(formService.showStringFormField(anyString())).thenReturn(expectedStringValue);
-
-        when(bookDao.findById(expectedIntValue)).thenReturn(Optional.empty());
-        when(bookDao.create(any())).thenReturn(true);
-
-        var actualBook = bookService.addBookUsingForm(authorId, genreId);
-
-        assertThat(actualBook).contains(expectedBook);
+        assertThat(actualResult).isEqualTo(true);
     }
 
     @Test
-    void shouldUpdateBook() {
-        var id = 1;
-        var book = new Book(
-                id,
-                "old title",
-                1L,
-                1L
-        );
-        var expectedStringValue = "new title";
+    void shouldReturnAllBooks() {
+        var expectedBooks = TestData.allBooks();
+        when(bookDao.findAll()).thenReturn(expectedBooks);
 
-        when(formService.showStringFormField(anyString())).thenReturn(expectedStringValue);
-        when(bookDao.findById(id)).thenReturn(Optional.of(book));
+        var actualBooks = bookService.findAll();
 
-        bookService.updateBookUsingForm(id);
+        assertThat(actualBooks).containsExactlyInAnyOrderElementsOf(expectedBooks);
+    }
 
-        verify(bookDao).update(new Book(id, expectedStringValue, 1L, 1L));
+    @Test
+    void shouldReturnTrueWhenBookDeleted() {
+        var book = TestData.firstBook();
+        when(bookDao.deleteById(book.getId())).thenReturn(true);
+
+        var actualResult = bookService.deleteById(book.getId());
+
+        assertThat(actualResult).isEqualTo(true);
     }
 
 }

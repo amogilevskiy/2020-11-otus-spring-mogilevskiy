@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import otus.amogilevskiy.spring.domain.Author;
 import otus.amogilevskiy.spring.domain.Book;
 import otus.amogilevskiy.spring.domain.Genre;
-import otus.amogilevskiy.spring.service.book.BookDetail;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,7 +26,11 @@ public class JdbcBookDao implements BookDao {
         var params = Map.of("id", id);
         try {
             return Optional.ofNullable(
-                    jdbc.queryForObject("SELECT * FROM books WHERE id = :id", params, new BookMapper())
+                    jdbc.queryForObject(
+                            "SELECT b.id, b.title, a.id, a.first_name, a.last_name, a.middle_name, g.id, g.title FROM books AS b " +
+                                    "LEFT JOIN authors as a on b.author_id = a.id " +
+                                    "LEFT JOIN genres as g on b.genre_id = g.id " +
+                                    "WHERE b.id = :id", params, new BookMapper())
             );
         } catch (DataAccessException e) {
             return Optional.empty();
@@ -35,25 +38,23 @@ public class JdbcBookDao implements BookDao {
     }
 
     @Override
-    public Optional<BookDetail> findDetailById(long id) {
-        var params = Map.of("id", id);
+    public List<Book> findAllByTitle(String title) {
+        var params = Map.of("title", title);
         try {
-            return Optional.ofNullable(
-                    jdbc.queryForObject(
-                            "SELECT b.id, b.title, a.id, a.first_name, a.last_name, a.middle_name, g.id, g.title FROM books AS b " +
-                                    "INNER JOIN authors as a on b.author_id = a.id " +
-                                    "INNER JOIN genres as g on b.genre_id = g.id " +
-                                    "WHERE b.id = :id", params, new BookDetailMapper())
-            );
+            return jdbc.query("SELECT b.id, b.title, a.id, a.first_name, a.last_name, a.middle_name, g.id, g.title FROM books AS b " +
+                    "LEFT JOIN authors as a on b.author_id = a.id " +
+                    "LEFT JOIN genres as g on b.genre_id = g.id WHERE UPPER(b.title) = UPPER(:title)", params, new BookMapper());
         } catch (DataAccessException e) {
-            return Optional.empty();
+            return List.of();
         }
     }
 
     @Override
     public List<Book> findAll() {
         try {
-            return jdbc.query("SELECT * FROM books", new BookMapper());
+            return jdbc.query("SELECT b.id, b.title, a.id, a.first_name, a.last_name, a.middle_name, g.id, g.title FROM books AS b " +
+                    "LEFT JOIN authors as a on b.author_id = a.id " +
+                    "LEFT JOIN genres as g on b.genre_id = g.id", new BookMapper());
         } catch (DataAccessException e) {
             return List.of();
         }
@@ -62,10 +63,12 @@ public class JdbcBookDao implements BookDao {
     @Override
     public List<Book> findAllByAuthorId(long authorId) {
         var params = Map.of(
-                "authorId", authorId
+                "author_id", authorId
         );
         try {
-            return jdbc.query("SELECT * FROM books WHERE author_id = :authorId", params, new BookMapper());
+            return jdbc.query("SELECT b.id, b.title, a.id, a.first_name, a.last_name, a.middle_name, g.id, g.title FROM books AS b " +
+                    "LEFT JOIN authors as a on b.author_id = a.id " +
+                    "LEFT JOIN genres as g on b.genre_id = g.id WHERE b.author_id = :author_id", params, new BookMapper());
         } catch (DataAccessException e) {
             return List.of();
         }
@@ -74,13 +77,12 @@ public class JdbcBookDao implements BookDao {
     @Override
     public boolean create(Book book) {
         var params = Map.of(
-                "id", book.getId(),
                 "title", book.getTitle(),
-                "authorId", book.getAuthorId(),
-                "genreId", book.getGenreId()
+                "author_id", book.getAuthor().getId(),
+                "genre_id", book.getGenre().getId()
         );
         try {
-            return jdbc.update("INSERT INTO books (id, title, author_id, genre_id) values (:id, :title, :authorId, :genreId)", params) > 0;
+            return jdbc.update("INSERT INTO books (title, author_id, genre_id) values (:title, :author_id, :genre_id)", params) > 0;
         } catch (DataAccessException e) {
             return false;
         }
@@ -115,22 +117,7 @@ public class JdbcBookDao implements BookDao {
 
         @Override
         public Book mapRow(ResultSet resultSet, int i) throws SQLException {
-            var authorId = resultSet.getLong("author_id");
-            var genreId = resultSet.getLong("genre_id");
             return new Book(
-                    resultSet.getLong("id"),
-                    resultSet.getString("title"),
-                    authorId == 0 ? null : authorId,
-                    genreId == 0 ? null : genreId
-            );
-        }
-    }
-
-    private static class BookDetailMapper implements RowMapper<BookDetail> {
-
-        @Override
-        public BookDetail mapRow(ResultSet resultSet, int i) throws SQLException {
-            return new BookDetail(
                     resultSet.getLong("books.id"),
                     resultSet.getString("books.title"),
                     new Author(

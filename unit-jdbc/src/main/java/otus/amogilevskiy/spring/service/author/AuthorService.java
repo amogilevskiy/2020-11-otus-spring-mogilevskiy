@@ -7,8 +7,8 @@ import java.util.Optional;
 
 public interface AuthorService {
 
-    List<Author> findAllAuthors();
+    List<Author> findAll();
 
-    Optional<Author> addAuthorUsingForm();
+    Optional<Author> create(Author author);
 
 }

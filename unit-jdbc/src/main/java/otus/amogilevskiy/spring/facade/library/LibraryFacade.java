@@ -1,6 +1,6 @@
-package otus.amogilevskiy.spring.service.library;
+package otus.amogilevskiy.spring.facade.library;
 
-public interface LibraryService {
+public interface LibraryFacade {
 
     String findBookById(long id);
 

@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 import otus.amogilevskiy.spring.domain.Author;
-import otus.amogilevskiy.spring.dto.author.CreateAuthorDto;
 
 import java.util.List;
 
@@ -23,8 +22,8 @@ public class JdbcAuthorDaoTest {
     @Test
     void shouldReturnAllAuthors() {
         var expectedAuthors = List.of(
-                new Author(1, "Test 1", "with", "middle name"),
-                new Author(2, "Test 2", "Only last name", null)
+                new Author(1L, "Test 1", "with", "middle name"),
+                new Author(2L, "Test 2", "Only last name", null)
         );
 
         var actualAuthors = authorDao.findAll();
@@ -34,18 +33,9 @@ public class JdbcAuthorDaoTest {
 
     @Test
     void shouldReturnAuthorById() {
-        var expectedAuthor = new Author(1, "Test 1", "with", "middle name");
+        var expectedAuthor = new Author(1L, "Test 1", "with", "middle name");
 
         var actualAuthor = authorDao.findById(expectedAuthor.getId());
-
-        assertThat(actualAuthor).contains(expectedAuthor);
-    }
-
-    @Test
-    void shouldReturnAuthorByFirstNameAndLastName() {
-        var expectedAuthor = new Author(1, "Test 1", "with", "middle name");
-
-        var actualAuthor = authorDao.findByFirstNameAndLastName(expectedAuthor.getFirstName(), expectedAuthor.getLastName());
 
         assertThat(actualAuthor).contains(expectedAuthor);
     }
@@ -59,10 +49,10 @@ public class JdbcAuthorDaoTest {
 
     @Test
     void shouldCreateAuthor() {
-        var expectedAuthor = new CreateAuthorDto("New author", "New last name", null);
+        var expectedAuthor = new Author(null, "New author", "New last name", null);
 
-        authorDao.create(expectedAuthor);
-        var actualAuthor = authorDao.findByFirstNameAndLastName(expectedAuthor.getFirstName(), expectedAuthor.getLastName());
+        var id = authorDao.create(expectedAuthor);
+        var actualAuthor = authorDao.findById(id.get());
 
         assertThat(actualAuthor.get()).usingRecursiveComparison().ignoringFields("id").isEqualTo(expectedAuthor);
     }
