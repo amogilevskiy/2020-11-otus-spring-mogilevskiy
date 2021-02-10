@@ -1,20 +1,40 @@
 package otus.amogilevskiy.spring.domain;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
+import javax.persistence.*;
+import java.util.Set;
+
+@NamedEntityGraph(name = "books-with-authors-genre-graph",
+        attributeNodes = {
+                @NamedAttributeNode("authors"), @NamedAttributeNode("genre")
+        })
 @Data
 @Builder
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"authors", "genre"})
+@EqualsAndHashCode(exclude = {"authors", "genre"})
+@Entity
+@Table(name = "books")
 public class Book {
 
-    private final Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private final String title;
+    @Column(name = "title", nullable = false)
+    private String title;
 
-    private final Author author;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    @JoinTable(name = "book_authors", joinColumns = {@JoinColumn(name = "book_id")}, inverseJoinColumns = {@JoinColumn(name = "author_id")})
+    private Set<Author> authors;
 
-    private final Genre genre;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    private Genre genre;
+
+    public Book(Long id) {
+        this.id = id;
+    }
 
 }

@@ -17,9 +17,7 @@ public class GenreViewImpl implements GenreView {
     public Genre showCreateGenreView() {
         formService.showLabelField(localizationService.localize("question.genre.form"));
         var title = formService.showStringFormField(localizationService.localize("question.genre.title"));
-        return Genre.builder()
-                .title(title)
-                .build();
+        return new Genre(null, title);
     }
 
 }

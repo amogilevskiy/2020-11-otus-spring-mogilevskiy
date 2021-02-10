@@ -1,20 +1,18 @@
-package otus.amogilevskiy.spring.dao.genre;
+package otus.amogilevskiy.spring.repository.genre;
 
 import otus.amogilevskiy.spring.domain.Genre;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface GenreDao {
+public interface GenreRepository {
 
     boolean contains(String title);
 
     Optional<Genre> findById(long id);
 
-    Optional<Genre> findByTitle(String title);
-
     List<Genre> findAll();
 
-    Optional<Long> create(Genre genre);
+    Optional<Genre> save(Genre genre);
 
 }

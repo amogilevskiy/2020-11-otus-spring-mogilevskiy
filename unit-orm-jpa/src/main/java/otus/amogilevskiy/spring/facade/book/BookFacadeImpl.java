@@ -8,6 +8,7 @@ import otus.amogilevskiy.spring.service.book.BookService;
 import otus.amogilevskiy.spring.service.localization.LocalizationService;
 import otus.amogilevskiy.spring.ui.book.BookView;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,8 +20,8 @@ public class BookFacadeImpl implements BookFacade {
     private final BookView bookView;
 
     @Override
-    public String create(Author author, Genre genre) {
-        var book = bookView.showCreateBookView(author, genre);
+    public String create(Set<Author> authors, Genre genre) {
+        var book = bookView.showCreateBookView(authors, genre);
         if (bookService.create(book)) {
             return localizationService.localize("success.bookAdded", new Object[]{book.getTitle()});
         } else {

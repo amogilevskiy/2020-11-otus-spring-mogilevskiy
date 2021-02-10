@@ -2,8 +2,9 @@ package otus.amogilevskiy.spring.service.author;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import otus.amogilevskiy.spring.dao.author.AuthorDao;
+import org.springframework.transaction.annotation.Transactional;
 import otus.amogilevskiy.spring.domain.Author;
+import otus.amogilevskiy.spring.repository.author.AuthorRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,16 +13,17 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
 
-    private final AuthorDao authorDao;
+    private final AuthorRepository authorRepository;
 
     @Override
     public List<Author> findAll() {
-        return authorDao.findAll();
+        return authorRepository.findAll();
     }
 
+    @Transactional
     @Override
     public Optional<Author> create(Author author) {
-        return authorDao.create(author).flatMap(authorDao::findById);
+        return authorRepository.save(author);
     }
 
 }

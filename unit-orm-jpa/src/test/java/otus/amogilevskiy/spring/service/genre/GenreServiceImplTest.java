@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import otus.amogilevskiy.spring.dao.TestData;
-import otus.amogilevskiy.spring.dao.genre.GenreDao;
+import otus.amogilevskiy.spring.utils.TestData;
 import otus.amogilevskiy.spring.domain.Genre;
+import otus.amogilevskiy.spring.repository.genre.GenreRepository;
 
 import java.util.Optional;
 
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 public class GenreServiceImplTest {
 
     @MockBean
-    private GenreDao genreDao;
+    private GenreRepository genreRepository;
 
     @Autowired
     private GenreService genreService;
@@ -31,8 +31,8 @@ public class GenreServiceImplTest {
         var expectedId = 1L;
         var expectedGenre = new Genre(expectedId, genre.getTitle());
 
-        when(genreDao.create(genre)).thenReturn(Optional.of(expectedId));
-        when(genreDao.findById(expectedId)).thenReturn(Optional.of(expectedGenre));
+        when(genreRepository.save(genre)).thenReturn(Optional.of(expectedGenre));
+        when(genreRepository.findById(expectedId)).thenReturn(Optional.of(expectedGenre));
 
         var actualGenre = genreService.create(genre);
 
@@ -42,7 +42,7 @@ public class GenreServiceImplTest {
     @Test
     void shouldReturnAllAuthors() {
         var expectedGenres = TestData.allGenres();
-        when(genreDao.findAll()).thenReturn(expectedGenres);
+        when(genreRepository.findAll()).thenReturn(expectedGenres);
 
         var actualGenres = genreService.findAll();
 

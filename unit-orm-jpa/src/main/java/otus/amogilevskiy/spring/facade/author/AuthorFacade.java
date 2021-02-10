@@ -2,10 +2,10 @@ package otus.amogilevskiy.spring.facade.author;
 
 import otus.amogilevskiy.spring.domain.Author;
 
-import java.util.Optional;
+import java.util.Set;
 
 public interface AuthorFacade {
 
-    Optional<Author> findOrCreateAuthor();
+    Set<Author> findOrCreateAuthors();
 
 }

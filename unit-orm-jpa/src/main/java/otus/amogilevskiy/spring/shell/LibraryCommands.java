@@ -37,4 +37,23 @@ public class LibraryCommands {
         return libraryFacade.updateBookById(id);
     }
 
+    @ShellMethod(value = "Find all comments by book id", key = {"fac", "find-all-comments"})
+    public String findAllComments(@ShellOption long bookId) {
+        return libraryFacade.showAllCommentsByBookId(bookId);
+    }
+
+    @ShellMethod(value = "Add a new comment to a book", key = {"ac", "add-comment"})
+    public String addComment(@ShellOption long bookId, @ShellOption String text) {
+        return libraryFacade.addComment(bookId, text);
+    }
+
+    @ShellMethod(value = "Delete an existing comment by id", key = {"dc", "delete-comment"})
+    public String deleteComment(@ShellOption long id) {
+        return libraryFacade.deleteCommentById(id);
+    }
+
+    @ShellMethod(value = "Update an existing comment by id", key = {"uc", "update-comment"})
+    public String updateComment(@ShellOption long id, @ShellOption String text) {
+        return libraryFacade.updateCommentById(id, text);
+    }
 }

@@ -5,9 +5,11 @@ import otus.amogilevskiy.spring.domain.Book;
 import otus.amogilevskiy.spring.domain.Genre;
 import otus.amogilevskiy.spring.dto.book.UpdateBookDto;
 
+import java.util.Set;
+
 public interface BookView {
 
-    Book showCreateBookView(Author author, Genre genre);
+    Book showCreateBookView(Set<Author> authors, Genre genre);
 
     UpdateBookDto showUpdateBookView(long id);
 

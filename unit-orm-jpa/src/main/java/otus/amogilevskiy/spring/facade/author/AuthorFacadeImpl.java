@@ -8,7 +8,9 @@ import otus.amogilevskiy.spring.service.form.FormService;
 import otus.amogilevskiy.spring.service.localization.LocalizationService;
 import otus.amogilevskiy.spring.ui.author.AuthorView;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,7 +23,16 @@ public class AuthorFacadeImpl implements AuthorFacade {
     private final AuthorView authorView;
 
     @Override
-    public Optional<Author> findOrCreateAuthor() {
+    public Set<Author> findOrCreateAuthors() {
+        var authors = new HashSet<Author>();
+        findOrCreateAuthor().ifPresent(authors::add);
+        while (formService.showBooleanFormField(localizationService.localize("question.author.additional"))) {
+            findOrCreateAuthor().ifPresent(authors::add);
+        }
+        return authors;
+    }
+
+    private Optional<Author> findOrCreateAuthor() {
         var shouldCreateAuthor = formService.showBooleanFormField(localizationService.localize("question.author.create"));
         if (shouldCreateAuthor) {
             return authorService.create(authorView.showCreateAuthorView());

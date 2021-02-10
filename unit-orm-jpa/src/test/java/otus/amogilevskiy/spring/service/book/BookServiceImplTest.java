@@ -5,9 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import otus.amogilevskiy.spring.dao.TestData;
-import otus.amogilevskiy.spring.dao.book.BookDao;
 import otus.amogilevskiy.spring.domain.Book;
+import otus.amogilevskiy.spring.repository.book.BookRepository;
+import otus.amogilevskiy.spring.service.comment.CommentService;
+import otus.amogilevskiy.spring.utils.TestData;
+
+import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -17,15 +21,18 @@ import static org.mockito.Mockito.when;
 public class BookServiceImplTest {
 
     @MockBean
-    private BookDao bookDao;
+    private BookRepository bookRepository;
+
+    @MockBean
+    private CommentService commentService;
 
     @Autowired
     private BookService bookService;
 
     @Test
     void shouldReturnTrueWhenBookCreated() {
-        var book = new Book(null, "New book", TestData.firstAuthor(), TestData.firstGenre());
-        when(bookDao.create(book)).thenReturn(true);
+        var book = new Book(null, "New book", Set.of(TestData.firstAuthor()), TestData.firstGenre());
+        when(bookRepository.save(book)).thenReturn(Optional.of(book));
 
         var actualResult = bookService.create(book);
 
@@ -35,7 +42,7 @@ public class BookServiceImplTest {
     @Test
     void shouldReturnAllBooks() {
         var expectedBooks = TestData.allBooks();
-        when(bookDao.findAll()).thenReturn(expectedBooks);
+        when(bookRepository.findAll()).thenReturn(expectedBooks);
 
         var actualBooks = bookService.findAll();
 
@@ -45,7 +52,8 @@ public class BookServiceImplTest {
     @Test
     void shouldReturnTrueWhenBookDeleted() {
         var book = TestData.firstBook();
-        when(bookDao.deleteById(book.getId())).thenReturn(true);
+        when(bookRepository.deleteById(book.getId())).thenReturn(true);
+        when(commentService.deleteAllByBookId(book.getId())).thenReturn(true);
 
         var actualResult = bookService.deleteById(book.getId());
 

@@ -1,25 +1,31 @@
-package otus.amogilevskiy.spring.dao.genre;
+package otus.amogilevskiy.spring.repository;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
-import otus.amogilevskiy.spring.dao.TestData;
 import otus.amogilevskiy.spring.domain.Genre;
+import otus.amogilevskiy.spring.repository.genre.GenreRepository;
+import otus.amogilevskiy.spring.repository.genre.JpaGenreRepository;
+import otus.amogilevskiy.spring.utils.TestData;
 
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@JdbcTest
-@Import(JdbcGenreDao.class)
-public class JdbcGenreDaoTest {
+@DataJpaTest
+@Import(JpaGenreRepository.class)
+public class JpaGenreRepositoryTest {
 
     @Autowired
-    GenreDao genreDao;
+    private GenreRepository genreRepository;
+
+    @Autowired
+    private TestEntityManager em;
 
     private static Stream<Arguments> params() {
         return Stream.of(
@@ -32,26 +38,27 @@ public class JdbcGenreDaoTest {
     void shouldCreateGenre() {
         var expectedGenre = new Genre(null, "New genre");
 
-        genreDao.create(expectedGenre);
-        var actualGenre = genreDao.findByTitle(expectedGenre.getTitle());
+        genreRepository.save(expectedGenre);
 
-        assertThat(actualGenre.get()).usingRecursiveComparison().ignoringFields("id").isEqualTo(expectedGenre);
+        var actualGenre = em.find(Genre.class, TestData.NUMBER_OF_ALL_GENRES + 1);
+
+        assertThat(actualGenre).usingRecursiveComparison().ignoringFields("id").isEqualTo(expectedGenre);
     }
 
     @Test
     void shouldReturnGenreById() {
-        var expectedGenre = new Genre(1L, "IT");
+        var expectedGenre = em.find(Genre.class, TestData.FIRST_GENRE_ID);
 
-        var actualAuthor = genreDao.findById(expectedGenre.getId());
+        var actualGenre = genreRepository.findById(expectedGenre.getId());
 
-        assertThat(actualAuthor).contains(expectedGenre);
+        assertThat(actualGenre).isPresent().contains(expectedGenre);
     }
 
     @Test
     void shouldReturnAllGenres() {
         var expectedGenres = TestData.allGenres();
 
-        var actualGenres = genreDao.findAll();
+        var actualGenres = genreRepository.findAll();
 
         assertThat(actualGenres).containsExactlyInAnyOrderElementsOf(expectedGenres);
     }
@@ -59,9 +66,8 @@ public class JdbcGenreDaoTest {
     @ParameterizedTest
     @MethodSource("params")
     void shouldReturnCorrectResult(String title, boolean expectedResult) {
-        var actualResult = genreDao.contains(title);
+        var actualResult = genreRepository.contains(title);
 
         assertThat(actualResult).isEqualTo(expectedResult);
     }
-
 }

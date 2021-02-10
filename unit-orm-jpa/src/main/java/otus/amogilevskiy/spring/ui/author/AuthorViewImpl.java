@@ -19,11 +19,7 @@ public class AuthorViewImpl implements AuthorView {
         var firstName = formService.showStringFormField(localizationService.localize("question.author.firstName"));
         var lastName = formService.showStringFormField(localizationService.localize("question.author.lastName"));
         var middleName = formService.showStringFormField(localizationService.localize("question.author.middleName"));
-        return Author.builder()
-                .firstName(firstName)
-                .lastName(lastName)
-                .middleName(middleName)
-                .build();
+        return new Author(null, firstName, lastName, middleName);
     }
 
 }

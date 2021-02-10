@@ -5,12 +5,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import otus.amogilevskiy.spring.dao.TestData;
-import otus.amogilevskiy.spring.dao.author.AuthorDao;
+import otus.amogilevskiy.spring.utils.TestData;
 import otus.amogilevskiy.spring.domain.Author;
+import otus.amogilevskiy.spring.repository.author.AuthorRepository;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -18,12 +18,12 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@JdbcTest
+@DataJpaTest
 @Import(AuthorServiceImpl.class)
 public class AuthorServiceImplTest {
 
     @MockBean
-    private AuthorDao authorDao;
+    private AuthorRepository authorRepository;
 
     @Autowired
     private AuthorService authorService;
@@ -41,8 +41,7 @@ public class AuthorServiceImplTest {
         var author = new Author(null, firstName, lastName, middleName);
         var expectedId = 1L;
         var expectedAuthor = new Author(expectedId, firstName, lastName, middleName);
-        when(authorDao.create(author)).thenReturn(Optional.of(expectedId));
-        when(authorDao.findById(expectedId)).thenReturn(Optional.of(expectedAuthor));
+        when(authorRepository.save(author)).thenReturn(Optional.of(expectedAuthor));
 
         var actualAuthor = authorService.create(author);
 
@@ -52,7 +51,7 @@ public class AuthorServiceImplTest {
     @Test
     void shouldReturnAllAuthors() {
         var expectedAuthors = TestData.allAuthors();
-        when(authorDao.findAll()).thenReturn(expectedAuthors);
+        when(authorRepository.findAll()).thenReturn(expectedAuthors);
 
         var actualAuthors = authorService.findAll();
 

@@ -9,6 +9,9 @@ import otus.amogilevskiy.spring.dto.book.UpdateBookDto;
 import otus.amogilevskiy.spring.service.form.FormService;
 import otus.amogilevskiy.spring.service.localization.LocalizationService;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class BookViewImpl implements BookView {
@@ -17,13 +20,13 @@ public class BookViewImpl implements BookView {
     private final LocalizationService localizationService;
 
     @Override
-    public Book showCreateBookView(Author author, Genre genre) {
+    public Book showCreateBookView(Set<Author> authors, Genre genre) {
         formService.showLabelField(localizationService.localize("question.book.form"));
         var title = formService.showStringFormField(localizationService.localize("question.book.title"));
         return Book.builder()
                 .title(title)
-                .author(author)
                 .genre(genre)
+                .authors(authors)
                 .build();
     }
 
@@ -36,9 +39,11 @@ public class BookViewImpl implements BookView {
 
     @Override
     public String showBookDetailView(Book book) {
-        var author = book.getAuthor();
-        var authorName = author.getMiddleName() == null ? String.format("%s %s", author.getFirstName(), author.getLastName())
-                : String.format("%s %s %s", author.getFirstName(), author.getMiddleName(), author.getLastName());
-        return localizationService.localize("book.detail", new Object[]{book.getId(), book.getTitle(), book.getGenre().getTitle(), authorName});
+        var authors = book.getAuthors().stream()
+                .map(author -> author.getMiddleName() == null
+                        ? String.format("%s %s", author.getFirstName(), author.getLastName())
+                        : String.format("%s %s %s", author.getFirstName(), author.getMiddleName(), author.getLastName()))
+                .collect(Collectors.joining(", "));
+        return localizationService.localize("book.detail", new Object[]{book.getId(), book.getTitle(), book.getGenre().getTitle(), authors});
     }
 }
