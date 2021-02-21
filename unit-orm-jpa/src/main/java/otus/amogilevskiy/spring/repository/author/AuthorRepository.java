@@ -13,4 +13,6 @@ public interface AuthorRepository {
 
     Optional<Author> save(Author author);
 
+    boolean delete(Author author);
+
 }

@@ -4,6 +4,6 @@ import otus.amogilevskiy.spring.domain.Author;
 
 public interface AuthorView {
 
-    Author showCreateAuthorView();
+    String showAuthorDetailView(Author author);
 
 }

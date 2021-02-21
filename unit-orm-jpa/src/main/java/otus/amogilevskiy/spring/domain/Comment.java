@@ -1,14 +1,16 @@
 package otus.amogilevskiy.spring.domain;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"book"})
-@EqualsAndHashCode(exclude = {"book"})
 @Entity
 @Table(name = "comments")
 public class Comment {
@@ -21,12 +23,7 @@ public class Comment {
     private String text;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id", referencedColumnName = "id")
+    @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-    public Comment(String text, Book book) {
-        this.text = text;
-        this.book = book;
-    }
-    
 }

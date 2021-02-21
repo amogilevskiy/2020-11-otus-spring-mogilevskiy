@@ -9,6 +9,10 @@ public interface AuthorService {
 
     List<Author> findAll();
 
+    Optional<Author> findById(long id);
+
     Optional<Author> create(Author author);
+
+    boolean deleteById(long id);
 
 }

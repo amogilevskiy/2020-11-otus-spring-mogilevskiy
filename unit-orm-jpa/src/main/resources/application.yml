@@ -14,8 +14,8 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
-        format-sql: true
-    show-sql: false
+        format-sql: false
+    show-sql: true
 
   messages:
     basename: i18n/messages

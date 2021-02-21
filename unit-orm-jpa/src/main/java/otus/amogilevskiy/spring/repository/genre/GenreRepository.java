@@ -15,4 +15,6 @@ public interface GenreRepository {
 
     Optional<Genre> save(Genre genre);
 
+    boolean delete(Genre genre);
+
 }

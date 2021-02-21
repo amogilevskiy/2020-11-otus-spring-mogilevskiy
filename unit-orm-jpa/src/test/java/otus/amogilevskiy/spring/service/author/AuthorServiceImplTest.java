@@ -8,14 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import otus.amogilevskiy.spring.utils.TestData;
 import otus.amogilevskiy.spring.domain.Author;
 import otus.amogilevskiy.spring.repository.author.AuthorRepository;
+import otus.amogilevskiy.spring.utils.TestData;
 
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @DataJpaTest
@@ -37,15 +37,16 @@ public class AuthorServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("params")
-    void shouldReturnNewAuthor(String firstName, String lastName, String middleName) {
-        var author = new Author(null, firstName, lastName, middleName);
-        var expectedId = 1L;
-        var expectedAuthor = new Author(expectedId, firstName, lastName, middleName);
-        when(authorRepository.save(author)).thenReturn(Optional.of(expectedAuthor));
+    void shouldCreateNewAuthor(String firstName, String lastName, String middleName) {
+        var expectedAuthor = Author.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .middleName(middleName)
+                .build();
 
-        var actualAuthor = authorService.create(author);
+        authorService.create(expectedAuthor);
 
-        assertThat(actualAuthor).contains(expectedAuthor);
+        verify(authorRepository).save(expectedAuthor);
     }
 
     @Test

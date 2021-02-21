@@ -33,16 +33,6 @@ public class JpaCommentRepositoryTest {
     }
 
     @Test
-    void shouldReturnCommentsByBookId() {
-        var firstComment = em.find(Comment.class, TestData.FIRST_COMMENT_ID);
-        var secondComment = em.find(Comment.class, TestData.SECOND_COMMENT_ID);
-
-        var actualComments = commentRepository.findAllByBookId(TestData.firstBook().getId());
-
-        assertThat(actualComments).containsExactlyInAnyOrder(firstComment, secondComment);
-    }
-
-    @Test
     void shouldReturnAllComments() {
         var actualComments = commentRepository.findAll();
 
@@ -57,8 +47,10 @@ public class JpaCommentRepositoryTest {
         var updatedText = "new text";
 
         assertThat(initialComment.getText()).isNotEqualTo(updatedText);
+
+        initialComment.setText(updatedText);
         em.clear();
-        commentRepository.updateTextById(id, updatedText);
+        commentRepository.save(initialComment);
         var actualComment = em.find(Comment.class, id);
 
         assertThat(actualComment.getText()).isEqualTo(updatedText);
@@ -68,34 +60,18 @@ public class JpaCommentRepositoryTest {
     void shouldDeleteCommentById() {
         var comment = em.find(Comment.class, TestData.FIRST_COMMENT_ID);
 
-        em.clear();
-        commentRepository.deleteById(comment.getId());
+        var actualResult = commentRepository.delete(comment);
 
-        var actualResult = em.find(Comment.class, comment.getId());
+        var actualComment = em.find(Comment.class, comment.getId());
 
-        assertThat(actualResult).isNull();
-    }
-
-    @Test
-    void shouldDeleteAllCommentsByBookId() {
-        var bookId = 1L;
-        var query = em.getEntityManager().createQuery("select c from Comment c where c.book.id = :book_id", Comment.class);
-        query.setParameter("book_id", bookId);
-        var initialComments = query.getResultList();
-
-        assertThat(initialComments).hasSizeGreaterThan(0);
-
-        var actualResult = commentRepository.deleteAllByBookId(bookId);
-
-        var actualComments = query.getResultList();
-        
         assertThat(actualResult).isTrue();
-        assertThat(actualComments).hasSize(0);
+        assertThat(actualComment).isNull();
     }
 
     @Test
     void shouldCreateNewComment() {
-        var expectedComment = new Comment(null, "new comment", new Book(TestData.firstBook().getId()));
+        var book = em.find(Book.class, TestData.firstBook().getId());
+        var expectedComment = Comment.builder().text("new comment").book(book).build();
         commentRepository.save(expectedComment);
 
         var actualComment = em.find(Comment.class, TestData.NUMBER_OF_ALL_COMMENTS + 1);

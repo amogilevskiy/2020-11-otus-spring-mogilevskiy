@@ -10,6 +10,8 @@ import otus.amogilevskiy.spring.domain.Author;
 import otus.amogilevskiy.spring.repository.author.AuthorRepository;
 import otus.amogilevskiy.spring.repository.author.JpaAuthorRepository;
 
+import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -43,7 +45,7 @@ public class JpaAuthorRepositoryTest {
 
     @Test
     void shouldCreateNewAuthor() {
-        var expectedAuthor = new Author(null, "first name", "last name", "middle name");
+        var expectedAuthor = new Author(null, "first name", "last name", "middle name", Set.of());
         authorRepository.save(expectedAuthor);
 
         var actualAuthor = em.find(Author.class, TestData.NUMBER_OF_ALL_AUTHORS + 1L);

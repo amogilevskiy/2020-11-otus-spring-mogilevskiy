@@ -9,15 +9,9 @@ public interface CommentRepository {
 
     Optional<Comment> findById(long id);
 
-    List<Comment> findAllByBookId(long bookId);
-
     List<Comment> findAll();
 
-    boolean updateTextById(long id, String text);
-
-    boolean deleteAllByBookId(long bookId);
-
-    boolean deleteById(long id);
+    boolean delete(Comment comment);
 
     Optional<Comment> save(Comment comment);
 

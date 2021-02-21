@@ -13,8 +13,6 @@ public interface BookRepository {
 
     Optional<Book> save(Book book);
 
-    boolean updateTitleById(long id, String title);
-
     boolean deleteById(long id);
 
 }

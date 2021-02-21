@@ -5,15 +5,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import otus.amogilevskiy.spring.domain.Book;
+import otus.amogilevskiy.spring.dto.book.BookDto;
 import otus.amogilevskiy.spring.repository.book.BookRepository;
+import otus.amogilevskiy.spring.service.author.AuthorService;
 import otus.amogilevskiy.spring.service.comment.CommentService;
+import otus.amogilevskiy.spring.service.genre.GenreService;
+import otus.amogilevskiy.spring.service.localization.LocalizationService;
 import otus.amogilevskiy.spring.utils.TestData;
 
 import java.util.Optional;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @JdbcTest
@@ -24,19 +28,36 @@ public class BookServiceImplTest {
     private BookRepository bookRepository;
 
     @MockBean
-    private CommentService commentService;
+    private GenreService genreService;
+
+    @MockBean
+    private AuthorService authorService;
+
+    @MockBean
+    private LocalizationService localizationService;
 
     @Autowired
     private BookService bookService;
 
     @Test
-    void shouldReturnTrueWhenBookCreated() {
-        var book = new Book(null, "New book", Set.of(TestData.firstAuthor()), TestData.firstGenre());
-        when(bookRepository.save(book)).thenReturn(Optional.of(book));
+    void shouldCreateNewBook() {
+        var title = "New book";
+        var genreId = TestData.firstGenre().getId();
+        var authorId = TestData.FIRST_AUTHOR_ID;
 
-        var actualResult = bookService.create(book);
+        when(authorService.findById(authorId)).thenReturn(Optional.of(TestData.firstAuthor()));
+        when(genreService.findById(genreId)).thenReturn(Optional.of(TestData.firstGenre()));
 
-        assertThat(actualResult).isEqualTo(true);
+        var dto = BookDto.builder()
+                .title(title)
+                .genreId(genreId)
+                .authorId(authorId)
+                .build();
+        bookService.create(dto);
+
+        verify(genreService).findById(dto.getGenreId());
+        verify(authorService).findById(dto.getAuthorId());
+        verify(bookRepository).save(any());
     }
 
     @Test
@@ -53,7 +74,6 @@ public class BookServiceImplTest {
     void shouldReturnTrueWhenBookDeleted() {
         var book = TestData.firstBook();
         when(bookRepository.deleteById(book.getId())).thenReturn(true);
-        when(commentService.deleteAllByBookId(book.getId())).thenReturn(true);
 
         var actualResult = bookService.deleteById(book.getId());
 

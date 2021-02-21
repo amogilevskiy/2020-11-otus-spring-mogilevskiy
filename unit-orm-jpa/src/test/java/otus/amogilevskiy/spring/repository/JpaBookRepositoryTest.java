@@ -5,11 +5,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import otus.amogilevskiy.spring.domain.Author;
 import otus.amogilevskiy.spring.domain.Book;
+import otus.amogilevskiy.spring.domain.Comment;
+import otus.amogilevskiy.spring.domain.Genre;
 import otus.amogilevskiy.spring.repository.book.BookRepository;
 import otus.amogilevskiy.spring.repository.book.JpaBookRepository;
 import otus.amogilevskiy.spring.utils.TestData;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +38,7 @@ public class JpaBookRepositoryTest {
     }
 
     @Test
-    void shouldReturnAllGenres() {
+    void shouldReturnAllBooks() {
         var expectedBooks = TestData.allBooks();
 
         var actualBooks = bookRepository.findAll();
@@ -44,7 +48,10 @@ public class JpaBookRepositoryTest {
 
     @Test
     void shouldCreateBook() {
-        var expectedBook = new Book(null, "new title", Set.of(TestData.firstAuthor()), TestData.firstGenre());
+        var genre = em.find(Genre.class, TestData.FIRST_GENRE_ID);
+        var author = em.find(Author.class, TestData.FIRST_AUTHOR_ID);
+
+        var expectedBook = new Book(null, "new title", Set.of(author), genre, List.of());
 
         bookRepository.save(expectedBook);
 
@@ -73,11 +80,40 @@ public class JpaBookRepositoryTest {
         var updatedTitle = "new text";
 
         assertThat(initialBook.getTitle()).isNotEqualTo(updatedTitle);
+        initialBook.setTitle(updatedTitle);
         em.clear();
-        bookRepository.updateTitleById(id, updatedTitle);
+
+        bookRepository.save(initialBook);
         var actualBook = em.find(Book.class, id);
 
         assertThat(actualBook.getTitle()).isEqualTo(updatedTitle);
+    }
+
+    @Test
+    void shouldReturnBookWithComments() {
+        var firstComment = em.find(Comment.class, TestData.FIRST_COMMENT_ID);
+        var secondComment = em.find(Comment.class, TestData.SECOND_COMMENT_ID);
+
+        var actualComments = bookRepository.findById(TestData.FIRST_BOOK_ID).map(Book::getComments).orElse(List.of());
+
+        assertThat(actualComments).containsExactlyInAnyOrder(firstComment, secondComment);
+    }
+
+    @Test
+    void shouldDeleteBookCommentsWhenItDeleted() {
+        var bookId = 1L;
+        var query = em.getEntityManager().createQuery("select c from Comment c where c.book.id = :book_id", Comment.class);
+        query.setParameter("book_id", bookId);
+        var initialComments = query.getResultList();
+
+        assertThat(initialComments).hasSizeGreaterThan(0);
+
+        var actualResult = bookRepository.deleteById(bookId);
+
+        var actualComments = query.getResultList();
+
+        assertThat(actualResult).isTrue();
+        assertThat(actualComments).hasSize(0);
     }
 
 }

@@ -1,7 +1,7 @@
 package otus.amogilevskiy.spring.repository.genre;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import otus.amogilevskiy.spring.domain.Genre;
 
 import javax.persistence.EntityManager;
@@ -9,7 +9,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+@Service
 @RequiredArgsConstructor
 public class JpaGenreRepository implements GenreRepository {
 
@@ -25,7 +25,7 @@ public class JpaGenreRepository implements GenreRepository {
 
     @Override
     public Optional<Genre> findById(long id) {
-        return Optional.of(em.find(Genre.class, id));
+        return Optional.ofNullable(em.find(Genre.class, id));
     }
 
     @Override
@@ -42,6 +42,12 @@ public class JpaGenreRepository implements GenreRepository {
         } else {
             return Optional.of(em.merge(genre));
         }
+    }
+
+    @Override
+    public boolean delete(Genre genre) {
+        em.remove(genre);
+        return true;
     }
 
 }

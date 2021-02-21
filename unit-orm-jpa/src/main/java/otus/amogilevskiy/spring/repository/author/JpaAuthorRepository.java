@@ -1,7 +1,7 @@
 package otus.amogilevskiy.spring.repository.author;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import otus.amogilevskiy.spring.domain.Author;
 
 import javax.persistence.EntityManager;
@@ -10,7 +10,7 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+@Service
 @RequiredArgsConstructor
 public class JpaAuthorRepository implements AuthorRepository {
 
@@ -38,4 +38,9 @@ public class JpaAuthorRepository implements AuthorRepository {
         }
     }
 
+    @Override
+    public boolean delete(Author author) {
+        em.remove(author);
+        return true;
+    }
 }
