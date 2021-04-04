@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>otus.amogilevskiy</groupId>
-    <artifactId>spring</artifactId>
+    <artifactId>library</artifactId>
     <version>1.0</version>
     <name>unit-spa</name>
     <description></description>
