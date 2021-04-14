@@ -1,0 +1,30 @@
+version: "3"
+services:
+
+  frontend:
+    build: frontend/
+    container_name: frontend
+    ports:
+      - 80:80
+    depends_on:
+      - db
+      - backend
+
+  backend:
+    build: backend/
+    container_name: backend
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/dev
+      - SPRING_DATASOURCE_USERNAME=dev
+      - SPRING_DATASOURCE_PASSWORD=dev
+
+  db:
+    image: postgres:12-alpine
+    container_name: db
+    environment:
+      - POSTGRES_USER=dev
+      - POSTGRES_PASSWORD=dev

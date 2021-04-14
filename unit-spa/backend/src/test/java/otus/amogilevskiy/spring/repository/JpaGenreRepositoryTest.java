@@ -22,7 +22,9 @@ public class JpaGenreRepositoryTest {
 
     @Test
     void shouldCreateGenre() {
-        var expectedGenre = new Genre(null, "New genre");
+        var expectedGenre = Genre.builder()
+                .title("New genre")
+                .build();
 
         genreRepository.save(expectedGenre);
 

@@ -1,13 +1,7 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
-    initialization-mode: always
     schema: classpath:schema.sql
-  h2:
-    console:
-      path: /h2-console
-      settings:
-        web-allow-others: true
+    initialization-mode: always
 
   jpa:
     hibernate:
@@ -33,7 +27,7 @@ server:
 
 management:
   server:
-    port: 8000
+    port: 8080
   endpoint:
     health:
       show-details: always
