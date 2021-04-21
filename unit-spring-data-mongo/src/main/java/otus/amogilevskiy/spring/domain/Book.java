@@ -23,6 +23,6 @@ public class Book {
     private String title;
     private Genre genre;
     @DBRef
-    private Set<Author> authors = new HashSet<>();
+    private Set<Author> authors;
 
 }
