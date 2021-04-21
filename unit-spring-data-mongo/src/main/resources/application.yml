@@ -1,0 +1,16 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27020/library
+  messages:
+    basename: i18n/messages
+
+mongock:
+  runner-type: InitializingBean
+  change-logs-scan-package:
+    - otus.amogilevskiy.spring.db
+
+
+
+
+

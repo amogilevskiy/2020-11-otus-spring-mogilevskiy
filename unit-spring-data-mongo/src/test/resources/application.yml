@@ -1,0 +1,17 @@
+spring:
+  data:
+    mongodb:
+      database: library
+      port: 0
+
+  shell:
+    interactive:
+      enabled: false
+
+  messages:
+    basename: i18n/messages
+
+mongock:
+  runner-type: InitializingBean
+  change-logs-scan-package:
+    - otus.amogilevskiy.spring.db
