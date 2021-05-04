@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: product-service
+  cloud:
+    config:
+      fail-fast: true
+feign:
+  circuitbreaker:
+    enabled: true
