@@ -9,16 +9,18 @@ import otus.amogilevskiy.spring.webflux.domain.Category;
 import otus.amogilevskiy.spring.webflux.dto.CategoryDto;
 import otus.amogilevskiy.spring.webflux.dto.CategoryResponseDto;
 import otus.amogilevskiy.spring.webflux.repository.ReactiveCategoryRepository;
+import otus.amogilevskiy.spring.webflux.repository.ReactiveProductRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Api(tags="Categories")
+@Api(tags = "Categories")
 @RestController
 @RequestMapping("/api/1.0/categories")
 @RequiredArgsConstructor
 public class CategoryController {
 
     private final ReactiveCategoryRepository categoryRepository;
+    private final ReactiveProductRepository productRepository;
     private final ModelMapper modelMapper;
 
     @GetMapping
@@ -41,7 +43,17 @@ public class CategoryController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Void> deleteById(@PathVariable String id) {
-        return categoryRepository.deleteById(id);
+        return productRepository.findAllByCategoryId(id)
+                .hasElements()
+                .flatMap(hasElements -> {
+                    if (hasElements) {
+                        return Mono.error(
+                                new RuntimeException("The category can't be removed, because it has related products.")
+                        );
+                    } else {
+                        return categoryRepository.deleteById(id);
+                    }
+                });
     }
 
     @PatchMapping("/{id}")
