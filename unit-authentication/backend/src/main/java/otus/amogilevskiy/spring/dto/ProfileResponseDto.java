@@ -4,12 +4,12 @@ import lombok.Data;
 import otus.amogilevskiy.spring.domain.User;
 
 @Data
-public class LoginResponseDto {
+public class ProfileResponseDto {
 
     private final long id;
     private final String username;
 
-    public LoginResponseDto(User user) {
+    public ProfileResponseDto(User user) {
         id = user.getId();
         username = user.getUsername();
     }

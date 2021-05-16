@@ -1,0 +1,44 @@
+spring:
+  datasource:
+    schema: classpath:schema.sql
+    initialization-mode: always
+    url: jdbc:postgresql://localhost:5432/library
+    username: postgres
+    password: pass
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format-sql: true
+    show-sql: true
+
+  messages:
+    basename: i18n/messages
+
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
+
+server:
+  port: 8080
+
+management:
+  server:
+    port: 8080
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  file:
+    name: logs/app.log

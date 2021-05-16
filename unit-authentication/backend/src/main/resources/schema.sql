@@ -1,8 +1,26 @@
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS user_authorities;
 DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS book_authors;
 DROP TABLE IF EXISTS authors;
 DROP TABLE IF EXISTS books;
 DROP TABLE IF EXISTS genres;
+
+CREATE TABLE users
+(
+    id          BIGSERIAL PRIMARY KEY,
+    username    VARCHAR(255) UNIQUE,
+    password    VARCHAR(255),
+    enabled     BOOLEAN
+);
+
+CREATE TABLE user_authorities
+(
+    id          BIGSERIAL PRIMARY KEY,
+    user_id     BIGINT NOT NULL,
+    authority   VARCHAR(255),
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
 
 CREATE TABLE authors
 (
