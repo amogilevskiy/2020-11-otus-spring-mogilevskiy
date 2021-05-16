@@ -1,9 +1,9 @@
 import GenreDto from "../dtos/GenreDto";
-import axios, {AxiosInstance} from "axios";
+import {AxiosInstance} from "axios";
 import Genre from "../domain/Genre";
-import applyCaseMiddleware from "axios-case-converter";
 import {PageRequest} from "./PageRequest";
 import {PaginatedList} from "./PaginatedList";
+import axiosClient from "./axiosClient";
 
 class GenreService {
 
@@ -34,4 +34,4 @@ class GenreService {
 
 }
 
-export default new GenreService(applyCaseMiddleware(axios.create()));
+export default new GenreService(axiosClient);

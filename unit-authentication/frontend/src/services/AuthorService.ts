@@ -1,9 +1,9 @@
-import axios, {AxiosInstance} from "axios";
+import {AxiosInstance} from "axios";
 import Author from "../domain/Author";
 import AuthorDto from "../dtos/AuthorDto";
-import applyCaseMiddleware from "axios-case-converter";
 import {PageRequest} from "./PageRequest";
 import {PaginatedList} from "./PaginatedList";
+import axiosClient from "./axiosClient";
 
 class AuthorService {
 
@@ -35,4 +35,4 @@ class AuthorService {
 
 }
 
-export default new AuthorService(applyCaseMiddleware(axios.create()));
+export default new AuthorService(axiosClient);

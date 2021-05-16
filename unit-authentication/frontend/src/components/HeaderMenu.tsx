@@ -2,32 +2,33 @@ import {Link, useLocation} from "react-router-dom";
 import {Menu} from "antd";
 import React from "react";
 
-const menuItems = [
-    {
-        name: 'Books',
-        link: '/',
-    },
-    {
-        name: 'Authors',
-        link: '/authors',
-    },
-    {
-        name: 'Genres',
-        link: '/genres',
-    },
-];
+interface HeaderMenuProps {
+    items: any[],
+    isAuthenticated: boolean;
+}
 
-const HeaderMenu = () => {
+const HeaderMenu = ({isAuthenticated, items}: HeaderMenuProps) => {
 
     const location = useLocation();
 
     return (
         <Menu theme="dark" mode="horizontal" selectedKeys={[location.pathname]}>
-            {menuItems.map((item) => (
-                <Menu.Item key={item.link}>
-                    <Link to={item.link}>{item.name}</Link>
-                </Menu.Item>
-            ))}
+            {items.filter((item) => item.isProtected === isAuthenticated)
+                .map((item) => {
+                    if (item.link) {
+                        return (
+                            <Menu.Item key={item.name}>
+                                <Link to={item.link}>{item.name}</Link>
+                            </Menu.Item>
+                        );
+                    } else {
+                        return (
+                            <Menu.Item key={item.name} onClick={item.action}>
+                                {item.name}
+                            </Menu.Item>
+                        );
+                    }
+                })}
         </Menu>
     );
 };

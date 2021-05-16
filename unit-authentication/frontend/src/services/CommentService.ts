@@ -1,8 +1,8 @@
-import axios, {AxiosInstance} from "axios";
+import {AxiosInstance} from "axios";
 import {PageRequest} from "./PageRequest";
 import {PaginatedList} from "./PaginatedList";
-import applyCaseMiddleware from "axios-case-converter";
 import Comment from "../domain/Comment";
+import axiosClient from "./axiosClient";
 
 class CommentService {
 
@@ -24,4 +24,4 @@ class CommentService {
 
 }
 
-export default new CommentService(applyCaseMiddleware(axios.create()));
+export default new CommentService(axiosClient);

@@ -9,7 +9,7 @@ export default class ErrorHandler {
         }
     }
 
-    private static isApiError(e: any) {
+    public static isApiError(e: any) {
         return e.response !== undefined;
     }
 
