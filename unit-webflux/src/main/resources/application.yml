@@ -1,0 +1,10 @@
+spring:
+  data:
+    mongodb:
+      database: mongo-products
+      port: 0
+
+mongock:
+  runner-type: InitializingBean
+  change-logs-scan-package:
+    - otus.amogilevskiy.spring.webflux.db
