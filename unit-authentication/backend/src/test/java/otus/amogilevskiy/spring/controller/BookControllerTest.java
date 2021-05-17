@@ -9,11 +9,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import otus.amogilevskiy.spring.config.SecurityTestConfig;
 import otus.amogilevskiy.spring.dto.book.BookDto;
 import otus.amogilevskiy.spring.service.book.BookService;
 import otus.amogilevskiy.spring.service.common.Resource;
-import otus.amogilevskiy.spring.service.common.ResourceAlreadyExistsException;
 import otus.amogilevskiy.spring.service.common.ResourceNotFoundException;
 import otus.amogilevskiy.spring.utils.TestData;
 
@@ -31,6 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(BookController.class)
 @Import(ModelMapper.class)
+@WithMockUser
+@ContextConfiguration(classes = {SecurityTestConfig.class})
 public class BookControllerTest {
 
     @Autowired
@@ -127,6 +132,13 @@ public class BookControllerTest {
                 .andExpect(jsonPath("code", is("book_not_found")))
                 .andExpect(jsonPath("message", is("Book not found.")))
                 .andExpect(status().isNotFound());
+    }
+
+    @WithAnonymousUser
+    @Test
+    void shouldReturnUnAuthorizedError() throws Exception {
+        mvc.perform(get("/api/1.0/books"))
+                .andExpect(status().isUnauthorized());
     }
 
 }

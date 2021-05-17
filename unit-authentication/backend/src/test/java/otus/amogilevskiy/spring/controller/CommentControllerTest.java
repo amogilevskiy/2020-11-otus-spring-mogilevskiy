@@ -10,7 +10,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import otus.amogilevskiy.spring.config.SecurityTestConfig;
 import otus.amogilevskiy.spring.dto.comment.CommentDto;
 import otus.amogilevskiy.spring.service.comment.CommentService;
 import otus.amogilevskiy.spring.service.common.Resource;
@@ -29,6 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(CommentController.class)
 @Import(ModelMapper.class)
+@WithMockUser
+@ContextConfiguration(classes = {SecurityTestConfig.class})
 public class CommentControllerTest {
 
     @Autowired
@@ -100,6 +106,13 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("code", is("comment_not_found")))
                 .andExpect(jsonPath("message", is("Comment not found.")))
                 .andExpect(status().isNotFound());
+    }
+
+    @WithAnonymousUser
+    @Test
+    void shouldReturnUnAuthorizedError() throws Exception {
+        mvc.perform(get("/api/1.0/comments"))
+                .andExpect(status().isUnauthorized());
     }
 
 }

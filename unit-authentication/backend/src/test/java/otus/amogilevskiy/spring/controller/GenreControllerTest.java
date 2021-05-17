@@ -9,7 +9,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import otus.amogilevskiy.spring.config.SecurityTestConfig;
 import otus.amogilevskiy.spring.dto.genre.GenreDto;
 import otus.amogilevskiy.spring.service.common.Resource;
 import otus.amogilevskiy.spring.service.common.ResourceAlreadyExistsException;
@@ -28,7 +32,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(GenreController.class)
-@Import(ModelMapper.class)
+@Import({ModelMapper.class})
+@WithMockUser
+@ContextConfiguration(classes = {SecurityTestConfig.class})
 public class GenreControllerTest {
 
     @Autowired
@@ -102,6 +108,13 @@ public class GenreControllerTest {
                 .andExpect(jsonPath("code", is("genre_already_exists")))
                 .andExpect(jsonPath("message", is("Genre already exists.")))
                 .andExpect(status().isConflict());
+    }
+
+    @WithAnonymousUser
+    @Test
+    void shouldReturnUnAuthorizedError() throws Exception {
+        mvc.perform(get("/api/1.0/genres"))
+                .andExpect(status().isUnauthorized());
     }
 
 }
