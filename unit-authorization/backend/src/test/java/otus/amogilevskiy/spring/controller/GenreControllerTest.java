@@ -14,6 +14,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import otus.amogilevskiy.spring.config.SecurityTestConfig;
+import otus.amogilevskiy.spring.domain.Authority;
 import otus.amogilevskiy.spring.dto.genre.GenreDto;
 import otus.amogilevskiy.spring.service.common.Resource;
 import otus.amogilevskiy.spring.service.common.ResourceAlreadyExistsException;
@@ -26,8 +27,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -71,6 +71,27 @@ public class GenreControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = {Authority.CAN_UPDATE_GENRES})
+    void shouldUpdateGenre() throws Exception {
+        var genre = TestData.firstGenre();
+
+        var dto = GenreDto.builder()
+                .title(genre.getTitle())
+                .build();
+
+        var json = objectMapper.writeValueAsString(dto);
+
+        when(genreService.findById(genre.getId())).thenReturn(genre);
+        when(genreService.updateById(genre.getId(), dto)).thenReturn(genre);
+
+        mvc.perform(patch("/api/1.0/genres/" + genre.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(authorities = {Authority.CAN_CREATE_GENRES})
     void shouldCreateGenre() throws Exception {
         var genre = TestData.firstGenre();
 
