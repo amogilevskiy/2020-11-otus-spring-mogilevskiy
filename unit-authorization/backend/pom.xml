@@ -11,7 +11,7 @@
     <groupId>otus.amogilevskiy</groupId>
     <artifactId>library</artifactId>
     <version>1.0</version>
-    <name>unit-authentication</name>
+    <name>unit-authorization</name>
     <description></description>
 
     <properties>

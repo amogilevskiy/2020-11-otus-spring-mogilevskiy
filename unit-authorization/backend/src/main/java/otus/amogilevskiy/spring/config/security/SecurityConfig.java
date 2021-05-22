@@ -3,6 +3,7 @@ package otus.amogilevskiy.spring.config.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import otus.amogilevskiy.spring.domain.Authority;
 
 @EnableWebSecurity
 @Configuration
@@ -25,6 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final ApiAuthenticationSuccessHandler authenticationSuccessHandler;
     private final ApiAuthenticationFailureHandler authenticationFailureHandler;
     private final ApiLogoutSuccessHandler logoutSuccessHandler;
+    private final ApiAccessDeniedHandler accessDeniedHandler;
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -36,6 +39,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .exceptionHandling()
                 .defaultAuthenticationEntryPointFor(getRestAuthenticationEntryPoint(), new AntPathRequestMatcher("/api/1.0/**"))
+                .accessDeniedHandler(accessDeniedHandler)
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.POST, "/api/1.0/genres").hasAuthority(Authority.CAN_CREATE_GENRES)
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.PATCH, "/api/1.0/genres/*").hasAuthority(Authority.CAN_UPDATE_GENRES)
                 .and()
                 .authorizeRequests().antMatchers("/api/1.0/**").authenticated()
                 .and()
